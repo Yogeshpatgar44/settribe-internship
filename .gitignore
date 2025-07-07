@@ -1,0 +1,15 @@
+# Node.js dependencies
+node_modules/
+
+# Environment variables
+.env
+
+
+# Ignore frontend dependencies
+client/node_modules
+client/package-lock.json
+
+# Ignore backend dependencies
+server/node_modules/
+server/package-lock.json
+.qodo
