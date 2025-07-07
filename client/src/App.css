@@ -5,6 +5,12 @@
   text-align: center;
 }
 
+body {
+  background-color: #f5f7fa;
+  font-family: 'Roboto', sans-serif;
+}
+
+
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -40,3 +46,4 @@
 .read-the-docs {
   color: #888;
 }
+
