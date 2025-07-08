@@ -2,7 +2,10 @@
 const mongoose = require('mongoose');
 
 const admissionSchema = new mongoose.Schema({
-  admissionId: String,
+  admissionId: {
+    type: String,
+    unique: true,
+  },
   fullName: String,
   age: Number,
   title: String,

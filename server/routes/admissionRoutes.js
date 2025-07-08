@@ -97,4 +97,55 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+router.post(
+  '/',
+  upload.fields([
+    { name: 'photo' },
+    { name: 'signature' },
+    { name: 'casteCertificate' },
+    { name: 'marksheet' },
+  ]),
+  async (req, res) => {
+    try {
+      const {
+        title, firstName, middleName, lastName, motherName, gender, dob,
+        address, taluka, district, pinCode, state,
+        mobile, email, aadhaar, religion, casteCategory, caste, physicallyHandicapped
+      } = req.body;
+
+      const fullName = [firstName, middleName, lastName].filter(Boolean).join(' ');
+      const age = new Date().getFullYear() - new Date(dob).getFullYear();
+
+      // 🔢 Generate admissionId like ADM2025001
+      const latestAdmission = await Admission.findOne().sort({ _id: -1 });
+      let newNumber = 1;
+      if (latestAdmission && latestAdmission.admissionId) {
+        const lastId = parseInt(latestAdmission.admissionId.slice(7)); // e.g. ADM2025001 => 1
+        newNumber = lastId + 1;
+      }
+      const admissionId = `ADM${new Date().getFullYear()}${String(newNumber).padStart(3, '0')}`;
+
+      const admission = new Admission({
+        admissionId,
+        title, firstName, middleName, lastName, fullName, motherName,
+        gender, dob, age,
+        address, taluka, district, pinCode, state,
+        mobile, email, aadhaar,
+        religion, casteCategory, caste, physicallyHandicapped,
+        photo: req.files.photo?.[0]?.filename || '',
+        signature: req.files.signature?.[0]?.filename || '',
+        casteCertificate: req.files.casteCertificate?.[0]?.filename || '',
+        marksheet: req.files.marksheet?.[0]?.filename || '',
+      });
+
+      await admission.save();
+      res.status(201).json({ message: 'Admission form submitted successfully!', admissionId });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to submit admission form' });
+    }
+  }
+);
+
+
 module.exports = router;
