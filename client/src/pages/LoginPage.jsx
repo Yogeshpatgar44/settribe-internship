@@ -5,7 +5,6 @@ import {
 import RefreshIcon from '@mui/icons-material/Refresh';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import ReCAPTCHA from "react-google-recaptcha";
 
 const generateCaptcha = () => {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -42,27 +41,21 @@ const LoginPage = () => {
       refreshCaptcha();
       return;
     }
-    
 
-    const [recaptchaToken, setRecaptchaToken] = useState("");
-
-    
-    <ReCAPTCHA
-      sitekey="6LdKb3srAAAAAIiB7huGUU8NbyvqETeefsWhH1r1"
-      onChange={(token) => setRecaptchaToken(token)}
-    />
     try {
       const res = await axios.post('http://localhost:5000/api/auth/login', {
         email: form.email,
         password: form.password,
-        captchaToken: recaptchaToken,
       });
+
       alert(res.data.message);
       localStorage.setItem('token', res.data.token);
-      // navigate('/form');
+
+      // ✅ Navigate to Admission Form after successful login
+      navigate('/form');
     } catch (err) {
       alert(err.response?.data?.message || 'Login failed');
-      refreshCaptcha(); // optional: refresh captcha on login failure
+      refreshCaptcha(); // Refresh captcha on error
     }
   };
 
@@ -102,24 +95,23 @@ const LoginPage = () => {
               required
             />
 
-            {/* Captcha Section */}
+            {/* Captcha Display */}
             <Box mt={2} display="flex" alignItems="center" gap={2}>
-            <Box
-          sx={{
-            px: 2,
-            py: 1,
-            bgcolor: 'grey.300',
-            borderRadius: 1,
-            fontFamily: 'monospace',
-            fontSize: '1.25rem',
-            fontWeight: 'bold',
-            letterSpacing: 1,
-          }}
-        >
-          <span style={{ marginRight: '8px' }}>Captcha:</span>
-          {captcha}
-        </Box>
-
+              <Box
+                sx={{
+                  px: 2,
+                  py: 1,
+                  bgcolor: 'grey.300',
+                  borderRadius: 1,
+                  fontFamily: 'monospace',
+                  fontSize: '1.25rem',
+                  fontWeight: 'bold',
+                  letterSpacing: 1,
+                }}
+              >
+                <span style={{ marginRight: '8px' }}>Captcha:</span>
+                {captcha}
+              </Box>
               <IconButton onClick={refreshCaptcha} title="Refresh Captcha">
                 <RefreshIcon />
               </IconButton>

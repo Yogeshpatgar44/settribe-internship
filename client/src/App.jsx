@@ -1,18 +1,23 @@
-// client/src/App.jsx
+// src/App.jsx
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
+
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
-import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import AdmissionForm from './pages/AdmissionForm';
-import Report from "./pages/Report"
+import Report from './pages/Report';
 import EditAdmission from './pages/EditAdmission';
+import Navbar from './components/Navbar';
+import PrivateRoute from './components/PrivateRoute';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
 
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1976d2', // blue
+      main: '#1976d2',
     },
     background: {
       default: '#e9eff5',
@@ -31,12 +36,41 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/form" element={<AdmissionForm />} />
-        <Route path="/report" element={<Report />} />
-        <Route path="/edit/:id" element={<EditAdmission />} />
 
+        {/* Protected Routes with Navbar */}
+        <Route
+          path="/form"
+          element={
+            <PrivateRoute>
+              <Navbar />
+              <AdmissionForm />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/report"
+          element={
+            <PrivateRoute>
+              <Navbar />
+              <Report />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/edit/:id"
+          element={
+            <PrivateRoute>
+              <Navbar />
+              <EditAdmission />
+            </PrivateRoute>
+          }
+        />
+
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactPage />} />
 
       </Routes>
     </ThemeProvider>
