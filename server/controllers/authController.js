@@ -1,6 +1,8 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
+
 
 // Register user
 exports.register = async (req, res) => {
@@ -54,5 +56,28 @@ exports.login = async (req, res) => {
 
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+
+exports.loginUser = async (req, res) => {
+  const { username, password, captchaToken } = req.body;
+
+  // ✅ 1. Verify captcha
+  const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+  const captchaUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${captchaToken}`;
+
+  try {
+    const response = await axios.post(captchaUrl);
+    if (!response.data.success) {
+      return res.status(400).json({ error: 'Captcha verification failed' });
+    }
+
+    // ✅ 2. Continue with login
+    // ...existing login logic
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error during captcha check' });
   }
 };
